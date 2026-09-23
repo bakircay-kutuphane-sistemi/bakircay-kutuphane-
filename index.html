@@ -1,13 +1,12 @@
-<!doctype html><html lang='tr'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Bakırçay Kütüphane Sistemi</title><link rel='stylesheet' href='style.css'></head><body>
-<header><button id='menuBtn'>☰</button><div><b>📚 Bakırçay Kütüphane</b><small>Yönetim Sistemi</small></div></header>
-<aside id='menu'><button data-page='panel'>⌂ Yönetim Paneli</button><button data-page='kitaplar'>📚 Kitaplar</button><button data-page='ogrenciler'>👥 Öğrenciler</button><button data-page='odunc'>↔ Ödünç / İade</button><button data-page='geciken'>⚠ Gecikenler</button></aside>
-<main>
-<section id='panel' class='page active'><h1>Kütüphane Yönetim Paneli</h1><div class='cards'><article><span>Toplam Kitap</span><strong id='sKitap'>0</strong></article><article><span>Toplam Öğrenci</span><strong id='sOgr'>0</strong></article><article><span>Ödünçte</span><strong id='sOdunc'>0</strong></article><article><span>Geciken</span><strong id='sGec'>0</strong></article></div><div class='box'><h2>Son Ödünç İşlemleri</h2><div id='sonIslem'>Henüz işlem yok.</div></div></section>
-<section id='kitaplar' class='page'><div class='title'><h1>Kitaplar</h1><button onclick="openForm('bookForm')">+ Kitap Ekle</button></div><input id='bookSearch' placeholder='Kitap adı, yazar veya QR no ara...'><div id='bookList' class='list'></div></section>
-<section id='ogrenciler' class='page'><div class='title'><h1>Öğrenciler</h1><button onclick="openForm('studentForm')">+ Öğrenci Ekle</button></div><input id='studentSearch' placeholder='Ad soyad veya okul no ara...'><div id='studentList' class='list'></div></section>
-<section id='odunc' class='page'><h1>Ödünç / İade İşlemleri</h1><div class='box'><h2>Kitap Ödünç Ver</h2><select id='loanBook'></select><select id='loanStudent'></select><label>Son teslim tarihi<input id='dueDate' type='date'></label><button onclick='lendBook()'>Ödünç Ver</button></div><div id='loanList' class='list'></div></section>
-<section id='geciken' class='page'><h1>Geciken Kitaplar</h1><div id='lateList' class='list'></div></section>
-</main>
-<dialog id='bookForm'><form method='dialog' onsubmit='saveBook(event)'><h2>Kitap Ekle</h2><input id='bName' required placeholder='Kitabın adı'><input id='bAuthor' required placeholder='Yazar'><input id='bType' placeholder='Tür'><div class='row'><input id='bCab' placeholder='Dolap'><input id='bShelf' placeholder='Raf'><input id='bOrder' placeholder='Sıra'></div><div class='actions'><button type='button' onclick="closeForm('bookForm')">Vazgeç</button><button>Kaydet</button></div></form></dialog>
-<dialog id='studentForm'><form method='dialog' onsubmit='saveStudent(event)'><h2>Öğrenci Ekle</h2><input id='sName' required placeholder='Ad soyad'><div class='row'><input id='sClass' required placeholder='Sınıf (örn. 10)'><input id='sBranch' required placeholder='Şube (örn. A)'></div><input id='sNo' required placeholder='Okul numarası'><div class='actions'><button type='button' onclick="closeForm('studentForm')">Vazgeç</button><button>Kaydet</button></div></form></dialog>
-<script src='app.js'></script></body></html>
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bakırçay Kütüphane Test</title>
+</head>
+<body>
+  <h1>📚 Bakırçay Kütüphane Sistemi</h1>
+  <p>Site başarıyla çalışıyor.</p>
+</body>
+</html>
