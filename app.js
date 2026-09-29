@@ -56,12 +56,43 @@ checkSession();
    Dewey + Tür + Alt Tür + Benzersiz Kitap Kodu
    ========================================================= */
 
-let books = JSON.parse(localStorage.getItem("books") || "[]");
+let books = [];
 let students = JSON.parse(localStorage.getItem("students") || "[]");
 let loans = JSON.parse(localStorage.getItem("loans") || "[]");
 
 const $ = id => document.getElementById(id);
 
+/* =========================================================
+   SUPABASE'DEN KİTAPLARI GETİR
+   ========================================================= */
+
+async function loadBooks() {
+  const { data, error } = await db
+    .from("kitaplar")
+    .select("*")
+    .order("id", { ascending: true });
+
+  if (error) {
+    console.error("Kitaplar yüklenemedi:", error);
+    alert("Kitaplar yüklenirken bir hata oluştu.");
+    return;
+  }
+
+  books = (data || []).map(book => ({
+    id: book.id,
+    qr: book.qr_no,
+    name: book.kitap_adi,
+    author: book.yazar,
+    type: book.tur,
+    subtype: book.alt_tur || "",
+    dewey: book.dewey || "",
+    cab: book.dolap || "",
+    shelf: book.raf || "",
+    order: book.sira || ""
+  }));
+
+  render();
+}
 
 /* =========================================================
    SINIFLANDIRMA SİSTEMİ
@@ -1044,4 +1075,4 @@ $("studentSearch").oninput = event => {
    BAŞLAT
    ========================================================= */
 
-render();
+loadBooks();
