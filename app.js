@@ -1102,3 +1102,4 @@ $("studentSearch").oninput = event => {
    ========================================================= */
 
 loadBooks();
+loadStudents();
