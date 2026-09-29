@@ -4,6 +4,53 @@ const db = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
 );
+
+/* =========================
+   SUPABASE GİRİŞ SİSTEMİ
+   ========================= */
+
+async function login() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  const message = document.getElementById("loginMessage");
+
+  message.textContent = "";
+
+  if (!email || !password) {
+    message.textContent = "E-posta ve şifreyi girin.";
+    return;
+  }
+
+  message.textContent = "Giriş yapılıyor...";
+
+  const { error } = await db.auth.signInWithPassword({
+    email: email,
+    password: password
+  });
+
+  if (error) {
+    message.textContent = "E-posta veya şifre hatalı.";
+    return;
+  }
+
+  message.textContent = "";
+  document.getElementById("loginScreen").style.display = "none";
+}
+
+
+/* Oturum daha önce açılmışsa giriş ekranını gösterme */
+
+async function checkSession() {
+  const { data } = await db.auth.getSession();
+
+  if (data.session) {
+    document.getElementById("loginScreen").style.display = "none";
+  } else {
+    document.getElementById("loginScreen").style.display = "flex";
+  }
+}
+
+checkSession();
 /* =========================================================
    BAKIRÇAY KÜTÜPHANE YÖNETİM SİSTEMİ
    Dewey + Tür + Alt Tür + Benzersiz Kitap Kodu
