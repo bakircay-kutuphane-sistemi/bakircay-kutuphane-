@@ -1,15 +1,994 @@
-let books=JSON.parse(localStorage.getItem('books')||'[]'),students=JSON.parse(localStorage.getItem('students')||'[]'),loans=JSON.parse(localStorage.getItem('loans')||'[]');
-const $=id=>document.getElementById(id), save=()=>{localStorage.setItem('books',JSON.stringify(books));localStorage.setItem('students',JSON.stringify(students));localStorage.setItem('loans',JSON.stringify(loans));render()};
-document.querySelectorAll('aside button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(b.dataset.page).classList.add('active');$('menu').classList.remove('open');render()});$('menuBtn').onclick=()=>$('menu').classList.toggle('open');
-function openForm(x){$(x).showModal()}function closeForm(x){$(x).close()}
-function saveBook(e){e.preventDefault();books.push({id:Date.now(),qr:'BK-'+String(books.length+1).padStart(6,'0'),name:$('bName').value,author:$('bAuthor').value,type:$('bType').value,cab:$('bCab').value,shelf:$('bShelf').value,order:$('bOrder').value});e.target.reset();closeForm('bookForm');save()}
-function saveStudent(e){e.preventDefault();students.push({id:Date.now(),name:$('sName').value,cls:$('sClass').value,branch:$('sBranch').value,no:$('sNo').value});e.target.reset();closeForm('studentForm');save()}
-function lendBook(){let book=+$('loanBook').value,student=+$('loanStudent').value,due=$('dueDate').value;if(!book||!student||!due)return alert('Kitap, öğrenci ve son teslim tarihini seç.');loans.push({id:Date.now(),book,student,start:new Date().toISOString().slice(0,10),due,returned:null});save()}
-function returnBook(id){let l=loans.find(x=>x.id===id);if(l){l.returned=new Date().toISOString().slice(0,10);save()}}
-function delBook(id){if(confirm('Bu kitap silinsin mi?')){books=books.filter(x=>x.id!==id);save()}}function delStudent(id){if(confirm('Bu öğrenci silinsin mi?')){students=students.filter(x=>x.id!==id);save()}}
-function render(){let active=loans.filter(l=>!l.returned),today=new Date().toISOString().slice(0,10),late=active.filter(l=>l.due<today);$('sKitap').textContent=books.length;$('sOgr').textContent=students.length;$('sOdunc').textContent=active.length;$('sGec').textContent=late.length;
-$('bookList').innerHTML=books.map(b=>`<div class=item><div><b>${b.name}</b><small>${b.author} · ${b.type||'-'} · ${b.qr} · Dolap ${b.cab||'-'} / Raf ${b.shelf||'-'} / Sıra ${b.order||'-'}</small></div><div class=buttons><button onclick="alert('QR No: ${b.qr}')">QR Kod</button><button class=muted onclick='delBook(${b.id})'>Sil</button></div></div>`).join('')||'<div class=box>Henüz kitap eklenmedi.</div>';
-$('studentList').innerHTML=students.map(s=>`<div class=item><div><b>${s.name}</b><small>${s.cls}/${s.branch} · No: ${s.no}</small></div><div class=buttons><button onclick="alert('${active.filter(l=>l.student===s.id).length} ödünç kitap var.')">Ödünç Kitap Bilgisi</button><button class=muted onclick='delStudent(${s.id})'>Sil</button></div></div>`).join('')||'<div class=box>Henüz öğrenci eklenmedi.</div>';
-let available=books.filter(b=>!active.some(l=>l.book===b.id));$('loanBook').innerHTML='<option value="">Kitap seçin</option>'+available.map(b=>`<option value=${b.id}>${b.name} (${b.qr})</option>`).join('');$('loanStudent').innerHTML='<option value="">Öğrenci seçin</option>'+students.map(s=>`<option value=${s.id}>${s.name} - ${s.no}</option>`).join('');
-let loanHTML=active.map(l=>{let b=books.find(x=>x.id===l.book),s=students.find(x=>x.id===l.student);return `<div class=item><div><b>${b?.name||'Kitap'}</b><small>${s?.name||'Öğrenci'} · Ödünç: ${l.start} · Son teslim: ${l.due}</small></div><button onclick='returnBook(${l.id})'>Geri Al</button></div>`}).join('');$('loanList').innerHTML=loanHTML;$('sonIslem').innerHTML=loanHTML||'Henüz işlem yok.';$('lateList').innerHTML=late.map(l=>{let b=books.find(x=>x.id===l.book),s=students.find(x=>x.id===l.student),days=Math.ceil((new Date(today)-new Date(l.due))/86400000);return `<div class=item><div><b>${b?.name}</b><small>${s?.name} · ${l.due} · ${days} gün gecikti</small></div><button onclick='returnBook(${l.id})'>Geri Al</button></div>`}).join('')||'<div class=box>Geciken kitap yok. 🎉</div>'}
-$('bookSearch').oninput=e=>{let q=e.target.value.toLocaleLowerCase('tr');document.querySelectorAll('#bookList .item').forEach(x=>x.style.display=x.innerText.toLocaleLowerCase('tr').includes(q)?'flex':'none')};$('studentSearch').oninput=e=>{let q=e.target.value.toLocaleLowerCase('tr');document.querySelectorAll('#studentList .item').forEach(x=>x.style.display=x.innerText.toLocaleLowerCase('tr').includes(q)?'flex':'none')};render();
+/* =========================================================
+   BAKIRÇAY KÜTÜPHANE YÖNETİM SİSTEMİ
+   Dewey + Tür + Alt Tür + Benzersiz Kitap Kodu
+   ========================================================= */
+
+let books = JSON.parse(localStorage.getItem("books") || "[]");
+let students = JSON.parse(localStorage.getItem("students") || "[]");
+let loans = JSON.parse(localStorage.getItem("loans") || "[]");
+
+const $ = id => document.getElementById(id);
+
+
+/* =========================================================
+   SINIFLANDIRMA SİSTEMİ
+   ========================================================= */
+
+const categories = {
+
+  "Genel Eserler": {
+    dewey: "000",
+    code: "GE"
+  },
+
+  "Felsefe ve Psikoloji": {
+    dewey: "100",
+    code: "FP"
+  },
+
+  "Din": {
+    dewey: "200",
+    code: "Dİ"
+  },
+
+  "Sosyal Bilimler": {
+    dewey: "300",
+    code: "SB"
+  },
+
+  "Dil": {
+    dewey: "400",
+    code: "DİL"
+  },
+
+  "Fen Bilimleri": {
+    dewey: "500",
+    code: "FB"
+  },
+
+  "Teknoloji": {
+    dewey: "600",
+    code: "TE"
+  },
+
+  "Sanat ve Eğlence": {
+    dewey: "700",
+    code: "SE"
+  },
+
+  "Edebiyat": {
+    dewey: "800",
+    code: "ED"
+  },
+
+  "Tarih ve Coğrafya": {
+    dewey: "900",
+    code: "TC"
+  },
+
+  "Roman": {
+    dewey: "813",
+    code: "R",
+    subtypes: {
+
+      "Psikolojik Roman": "PR",
+      "Polisiye Roman": "PO",
+      "Çocuk Romanı": "ÇR",
+      "Tarihi Roman": "TR",
+      "Bilim Kurgu Romanı": "BK",
+      "Fantastik Roman": "FR",
+      "Macera Romanı": "MR",
+      "Aşk Romanı": "AR",
+      "Gerilim Romanı": "GR",
+      "Distopya Romanı": "DR",
+      "Biyografik Roman": "BR",
+      "Toplumsal Roman": "SR",
+      "Klasik Roman": "KR",
+      "Diğer Roman": "R"
+    }
+  }
+
+};
+
+
+/* =========================================================
+   KAYDET
+   ========================================================= */
+
+function save() {
+
+  localStorage.setItem("books", JSON.stringify(books));
+  localStorage.setItem("students", JSON.stringify(students));
+  localStorage.setItem("loans", JSON.stringify(loans));
+
+  render();
+}
+
+
+/* =========================================================
+   MENÜ
+   ========================================================= */
+
+document.querySelectorAll("aside button").forEach(button => {
+
+  button.onclick = () => {
+
+    document.querySelectorAll(".page").forEach(page =>
+      page.classList.remove("active")
+    );
+
+    $(button.dataset.page).classList.add("active");
+
+    $("menu").classList.remove("open");
+
+    render();
+  };
+
+});
+
+$("menuBtn").onclick = () =>
+  $("menu").classList.toggle("open");
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+function openForm(id) {
+
+  $(id).showModal();
+
+  if (id === "bookForm") {
+    prepareBookForm();
+  }
+}
+
+function closeForm(id) {
+  $(id).close();
+}
+
+
+/* =========================================================
+   KİTAP FORMU
+   ========================================================= */
+
+function prepareBookForm() {
+
+  const typeSelect = $("bType");
+
+  if (!typeSelect) return;
+
+  typeSelect.innerHTML =
+    '<option value="">Tür seçin</option>';
+
+  Object.keys(categories).forEach(type => {
+
+    const option = document.createElement("option");
+
+    option.value = type;
+    option.textContent = type;
+
+    typeSelect.appendChild(option);
+  });
+
+  /* Manuel tür */
+
+  const manual = document.createElement("option");
+
+  manual.value = "__manual__";
+  manual.textContent = "+ Listede olmayan tür";
+
+  typeSelect.appendChild(manual);
+
+  typeSelect.onchange = handleTypeChange;
+
+  handleTypeChange();
+}
+
+
+/* =========================================================
+   TÜR DEĞİŞTİRİLDİĞİNDE
+   ========================================================= */
+
+function handleTypeChange() {
+
+  const type = $("bType")?.value;
+
+  const subtype = $("bSubtype");
+  const manualType = $("bManualType");
+  const dewey = $("bDewey");
+  const codePreview = $("bCodePreview");
+
+  if (subtype) {
+    subtype.innerHTML =
+      '<option value="">Alt tür seçin</option>';
+  }
+
+  if (manualType) {
+    manualType.style.display = "none";
+  }
+
+  if (!type) {
+
+    if (dewey) dewey.value = "";
+    if (codePreview) codePreview.value = "";
+
+    if (subtype) subtype.style.display = "none";
+
+    return;
+  }
+
+
+  /* MANUEL TÜR */
+
+  if (type === "__manual__") {
+
+    if (manualType) {
+      manualType.style.display = "block";
+    }
+
+    if (subtype) {
+      subtype.style.display = "none";
+    }
+
+    if (dewey) {
+      dewey.value = "";
+      dewey.placeholder = "Dewey kodunu girin";
+      dewey.readOnly = false;
+    }
+
+    if (codePreview) {
+      codePreview.value = "";
+    }
+
+    return;
+  }
+
+
+  /* NORMAL TÜR */
+
+  const data = categories[type];
+
+  if (dewey) {
+
+    dewey.value = data.dewey;
+    dewey.readOnly = true;
+  }
+
+
+  /* ROMAN ALT TÜRLERİ */
+
+  if (data.subtypes && subtype) {
+
+    subtype.style.display = "block";
+
+    Object.entries(data.subtypes).forEach(([name, code]) => {
+
+      const option = document.createElement("option");
+
+      option.value = name;
+      option.dataset.code = code;
+      option.textContent = `${name} [${code}]`;
+
+      subtype.appendChild(option);
+    });
+
+    subtype.onchange = updateCodePreview;
+
+  } else if (subtype) {
+
+    subtype.style.display = "none";
+  }
+
+  updateCodePreview();
+}
+
+
+/* =========================================================
+   TÜRKÇE HARFLERİ KOD İÇİN DÜZENLE
+   ========================================================= */
+
+function normalizeCode(text) {
+
+  return String(text || "")
+    .trim()
+    .toLocaleUpperCase("tr-TR")
+    .replace(/\s+/g, "")
+    .replace(/[^A-ZÇĞİÖŞÜ0-9]/g, "");
+}
+
+
+/* =========================================================
+   BENZERSİZ SIRA NUMARASI
+   ========================================================= */
+
+function nextNumber(prefix) {
+
+  let max = 0;
+
+  books.forEach(book => {
+
+    if (!book.qr) return;
+
+    const parts = String(book.qr).split("-");
+
+    if (parts[0] === prefix) {
+
+      const number = parseInt(parts[1], 10);
+
+      if (!isNaN(number) && number > max) {
+        max = number;
+      }
+    }
+  });
+
+  return max + 1;
+}
+
+
+/* =========================================================
+   KİTAP KODU OLUŞTUR
+   ========================================================= */
+
+function createBookCode(type, subtype, manualType) {
+
+  let prefix = "KT";
+
+  if (type === "__manual__") {
+
+    const cleaned = normalizeCode(manualType);
+
+    prefix = cleaned.substring(0, 2) || "KT";
+
+  } else {
+
+    const data = categories[type];
+
+    if (type === "Roman" && subtype) {
+
+      prefix =
+        data.subtypes[subtype] ||
+        "R";
+
+    } else {
+
+      prefix = data?.code || "KT";
+    }
+  }
+
+  const number = nextNumber(prefix);
+
+  return `${prefix}-${String(number).padStart(6, "0")}`;
+}
+
+
+/* =========================================================
+   KOD ÖNİZLEME
+   ========================================================= */
+
+function updateCodePreview() {
+
+  const preview = $("bCodePreview");
+
+  if (!preview) return;
+
+  const type = $("bType")?.value || "";
+  const subtype = $("bSubtype")?.value || "";
+  const manualType = $("bManualType")?.value || "";
+
+  if (!type) {
+
+    preview.value = "";
+    return;
+  }
+
+  let prefix = "KT";
+
+  if (type === "__manual__") {
+
+    prefix =
+      normalizeCode(manualType).substring(0, 2) ||
+      "KT";
+
+  } else if (type === "Roman") {
+
+    prefix =
+      categories.Roman.subtypes[subtype] ||
+      "R";
+
+  } else {
+
+    prefix =
+      categories[type]?.code ||
+      "KT";
+  }
+
+  preview.value =
+    `${prefix}-${String(nextNumber(prefix)).padStart(6, "0")}`;
+}
+
+
+/* Manuel tür yazıldığında kodu güncelle */
+
+if ($("bManualType")) {
+
+  $("bManualType").addEventListener(
+    "input",
+    updateCodePreview
+  );
+}
+
+
+/* =========================================================
+   KİTAP KAYDET
+   ========================================================= */
+
+function saveBook(event) {
+
+  event.preventDefault();
+
+  let type = $("bType")?.value || "";
+  let subtype = $("bSubtype")?.value || "";
+  let manualType = $("bManualType")?.value.trim() || "";
+  let dewey = $("bDewey")?.value.trim() || "";
+
+
+  if (!type) {
+
+    alert("Lütfen kitap türünü seçin.");
+    return;
+  }
+
+
+  if (type === "__manual__") {
+
+    if (!manualType) {
+
+      alert("Lütfen tür adını yazın.");
+      return;
+    }
+
+    if (!dewey) {
+
+      alert("Manuel tür için Dewey kodunu girin.");
+      return;
+    }
+  }
+
+
+  if (type === "Roman" && !subtype) {
+
+    alert("Lütfen romanın alt türünü seçin.");
+    return;
+  }
+
+
+  const finalType =
+    type === "__manual__"
+      ? manualType
+      : type;
+
+
+  const qr = createBookCode(
+    type,
+    subtype,
+    manualType
+  );
+
+
+  /* Ek güvenlik: aynı kod varsa tekrar üret */
+
+  if (books.some(book => book.qr === qr)) {
+
+    alert("Kod çakışması oluştu. Lütfen tekrar deneyin.");
+    return;
+  }
+
+
+  books.push({
+
+    id: Date.now(),
+
+    qr: qr,
+
+    name: $("bName").value.trim(),
+
+    author: $("bAuthor").value.trim(),
+
+    type: finalType,
+
+    subtype: subtype,
+
+    dewey: dewey,
+
+    cab: $("bCab").value.trim(),
+
+    shelf: $("bShelf").value.trim(),
+
+    order: $("bOrder").value.trim()
+
+  });
+
+
+  event.target.reset();
+
+  closeForm("bookForm");
+
+  save();
+}
+
+
+/* =========================================================
+   ÖĞRENCİ
+   ========================================================= */
+
+function saveStudent(event) {
+
+  event.preventDefault();
+
+  students.push({
+
+    id: Date.now(),
+
+    name: $("sName").value.trim(),
+
+    cls: $("sClass").value.trim(),
+
+    branch: $("sBranch").value.trim(),
+
+    no: $("sNo").value.trim()
+
+  });
+
+  event.target.reset();
+
+  closeForm("studentForm");
+
+  save();
+}
+
+
+/* =========================================================
+   ÖDÜNÇ
+   ========================================================= */
+
+function lendBook() {
+
+  const book = +$("loanBook").value;
+  const student = +$("loanStudent").value;
+  const due = $("dueDate").value;
+
+  if (!book || !student || !due) {
+
+    alert(
+      "Kitap, öğrenci ve son teslim tarihini seç."
+    );
+
+    return;
+  }
+
+  loans.push({
+
+    id: Date.now(),
+
+    book: book,
+
+    student: student,
+
+    start: new Date()
+      .toISOString()
+      .slice(0, 10),
+
+    due: due,
+
+    returned: null
+
+  });
+
+  save();
+}
+
+
+/* =========================================================
+   İADE
+   ========================================================= */
+
+function returnBook(id) {
+
+  const loan =
+    loans.find(item => item.id === id);
+
+  if (loan) {
+
+    loan.returned =
+      new Date()
+        .toISOString()
+        .slice(0, 10);
+
+    save();
+  }
+}
+
+
+/* =========================================================
+   SİLME
+   ========================================================= */
+
+function delBook(id) {
+
+  if (confirm("Bu kitap silinsin mi?")) {
+
+    books =
+      books.filter(book => book.id !== id);
+
+    save();
+  }
+}
+
+
+function delStudent(id) {
+
+  if (confirm("Bu öğrenci silinsin mi?")) {
+
+    students =
+      students.filter(student => student.id !== id);
+
+    save();
+  }
+}
+
+
+/* =========================================================
+   EKRANI YENİLE
+   ========================================================= */
+
+function render() {
+
+  const active =
+    loans.filter(loan => !loan.returned);
+
+  const today =
+    new Date()
+      .toISOString()
+      .slice(0, 10);
+
+  const late =
+    active.filter(
+      loan => loan.due < today
+    );
+
+
+  $("sKitap").textContent =
+    books.length;
+
+  $("sOgr").textContent =
+    students.length;
+
+  $("sOdunc").textContent =
+    active.length;
+
+  $("sGec").textContent =
+    late.length;
+
+
+  /* =====================================================
+     KİTAP LİSTESİ
+     ===================================================== */
+
+  $("bookList").innerHTML =
+
+    books.map(book => {
+
+      const subtypeText =
+        book.subtype
+          ? ` · ${book.subtype}`
+          : "";
+
+      const deweyText =
+        book.dewey
+          ? ` · Dewey: ${book.dewey}`
+          : "";
+
+      return `
+
+        <div class="item">
+
+          <div>
+
+            <b>${book.name}</b>
+
+            <small>
+              ${book.author}
+              · ${book.type || "-"}
+              ${subtypeText}
+              ${deweyText}
+              · ${book.qr}
+              · Dolap ${book.cab || "-"}
+              / Raf ${book.shelf || "-"}
+              / Sıra ${book.order || "-"}
+            </small>
+
+          </div>
+
+          <div class="buttons">
+
+            <button
+              onclick="alert('Kitap Kodu: ${book.qr}')"
+            >
+              QR Kod
+            </button>
+
+            <button
+              class="muted"
+              onclick="delBook(${book.id})"
+            >
+              Sil
+            </button>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }).join("") ||
+
+    '<div class="box">Henüz kitap eklenmedi.</div>';
+
+
+  /* =====================================================
+     ÖĞRENCİ LİSTESİ
+     ===================================================== */
+
+  $("studentList").innerHTML =
+
+    students.map(student => {
+
+      const count =
+        active.filter(
+          loan => loan.student === student.id
+        ).length;
+
+      return `
+
+        <div class="item">
+
+          <div>
+
+            <b>${student.name}</b>
+
+            <small>
+              ${student.cls}/${student.branch}
+              · No: ${student.no}
+            </small>
+
+          </div>
+
+          <div class="buttons">
+
+            <button
+              onclick="alert('${count} ödünç kitap var.')"
+            >
+              Ödünç Kitap Bilgisi
+            </button>
+
+            <button
+              class="muted"
+              onclick="delStudent(${student.id})"
+            >
+              Sil
+            </button>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }).join("") ||
+
+    '<div class="box">Henüz öğrenci eklenmedi.</div>';
+
+
+  /* =====================================================
+     ÖDÜNÇ SEÇENEKLERİ
+     ===================================================== */
+
+  const available =
+
+    books.filter(book =>
+
+      !active.some(
+        loan => loan.book === book.id
+      )
+    );
+
+
+  $("loanBook").innerHTML =
+
+    '<option value="">Kitap seçin</option>' +
+
+    available.map(book =>
+
+      `<option value="${book.id}">
+        ${book.name} (${book.qr})
+      </option>`
+
+    ).join("");
+
+
+  $("loanStudent").innerHTML =
+
+    '<option value="">Öğrenci seçin</option>' +
+
+    students.map(student =>
+
+      `<option value="${student.id}">
+        ${student.name} - ${student.no}
+      </option>`
+
+    ).join("");
+
+
+  /* =====================================================
+     AKTİF ÖDÜNÇLER
+     ===================================================== */
+
+  const loanHTML =
+
+    active.map(loan => {
+
+      const book =
+        books.find(
+          item => item.id === loan.book
+        );
+
+      const student =
+        students.find(
+          item => item.id === loan.student
+        );
+
+      return `
+
+        <div class="item">
+
+          <div>
+
+            <b>${book?.name || "Kitap"}</b>
+
+            <small>
+              ${student?.name || "Öğrenci"}
+              · Ödünç: ${loan.start}
+              · Son teslim: ${loan.due}
+            </small>
+
+          </div>
+
+          <button
+            onclick="returnBook(${loan.id})"
+          >
+            Geri Al
+          </button>
+
+        </div>
+
+      `;
+
+    }).join("");
+
+
+  $("loanList").innerHTML =
+    loanHTML;
+
+  $("sonIslem").innerHTML =
+    loanHTML || "Henüz işlem yok.";
+
+
+  /* =====================================================
+     GECİKENLER
+     ===================================================== */
+
+  $("lateList").innerHTML =
+
+    late.map(loan => {
+
+      const book =
+        books.find(
+          item => item.id === loan.book
+        );
+
+      const student =
+        students.find(
+          item => item.id === loan.student
+        );
+
+      const days =
+        Math.ceil(
+          (
+            new Date(today) -
+            new Date(loan.due)
+          ) / 86400000
+        );
+
+      return `
+
+        <div class="item">
+
+          <div>
+
+            <b>${book?.name || "Kitap"}</b>
+
+            <small>
+              ${student?.name || "Öğrenci"}
+              · ${loan.due}
+              · ${days} gün gecikti
+            </small>
+
+          </div>
+
+          <button
+            onclick="returnBook(${loan.id})"
+          >
+            Geri Al
+          </button>
+
+        </div>
+
+      `;
+
+    }).join("") ||
+
+    '<div class="box">Geciken kitap yok. 🎉</div>';
+
+}
+
+
+/* =========================================================
+   ARAMA
+   ========================================================= */
+
+$("bookSearch").oninput = event => {
+
+  const query =
+    event.target.value
+      .toLocaleLowerCase("tr-TR");
+
+  document
+    .querySelectorAll("#bookList .item")
+    .forEach(item => {
+
+      item.style.display =
+        item.innerText
+          .toLocaleLowerCase("tr-TR")
+          .includes(query)
+          ? "flex"
+          : "none";
+    });
+};
+
+
+$("studentSearch").oninput = event => {
+
+  const query =
+    event.target.value
+      .toLocaleLowerCase("tr-TR");
+
+  document
+    .querySelectorAll("#studentList .item")
+    .forEach(item => {
+
+      item.style.display =
+        item.innerText
+          .toLocaleLowerCase("tr-TR")
+          .includes(query)
+          ? "flex"
+          : "none";
+    });
+};
+
+
+/* =========================================================
+   BAŞLAT
+   ========================================================= */
+
+render();
