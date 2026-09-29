@@ -10,7 +10,33 @@
 </head>
 
 <body>
+<!-- GİRİŞ EKRANI -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-box">
+    <h1>📚 Bakırçay Kütüphane</h1>
+    <p>Kütüphane Yönetim Sistemi</p>
 
+    <input
+      id="loginEmail"
+      type="email"
+      placeholder="E-posta adresi"
+      autocomplete="email"
+    >
+
+    <input
+      id="loginPassword"
+      type="password"
+      placeholder="Şifre"
+      autocomplete="current-password"
+    >
+
+    <button type="button" onclick="login()">
+      Giriş Yap
+    </button>
+
+    <div id="loginMessage"></div>
+  </div>
+</div>
   <header>
     <button id="menuBtn" type="button">☰</button>
 
