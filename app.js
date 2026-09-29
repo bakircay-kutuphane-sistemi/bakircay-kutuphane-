@@ -94,6 +94,32 @@ async function loadBooks() {
   render();
 }
 
+/* =========================
+   SUPABASE'DEN ÖĞRENCİLERİ GETİR
+   ========================= */
+
+async function loadStudents() {
+  const { data, error } = await db
+    .from("ogrenciler")
+    .select("*")
+    .order("id", { ascending: true });
+
+  if (error) {
+    console.error("Öğrenciler yüklenirken hata:", error);
+    alert("Öğrenciler yüklenirken bir hata oluştu.");
+    return;
+  }
+
+  students = (data || []).map(student => ({
+    id: student.id,
+    name: student.ad_soyad,
+    cls: student.sinif,
+    branch: student.sube,
+    no: student.okul_no
+  }));
+
+  render();
+}
 /* =========================================================
    SINIFLANDIRMA SİSTEMİ
    ========================================================= */
