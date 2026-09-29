@@ -1,3 +1,9 @@
+const SUPABASE_URL = "https://kdeipenudegjcmrmrvcu.supabase.co";
+const SUPABASE_KEY = "sb_publishable_5iRCAo4Oxj-e9Ux93sOGpA_-xP91JOF";
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 /* =========================================================
    BAKIRÇAY KÜTÜPHANE YÖNETİM SİSTEMİ
    Dewey + Tür + Alt Tür + Benzersiz Kitap Kodu
