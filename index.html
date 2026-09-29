@@ -60,7 +60,32 @@
           <strong id="sGec">0</strong>
         </article>
 
+        <article>
+          <span>Toplam Okuma</span>
+          <strong id="sOkuma">0</strong>
+        </article>
+
       </div>
+
+
+      <div class="dashboard-grid">
+
+        <div class="box">
+          <h2>🏆 En Çok Okuyan Öğrenciler</h2>
+          <div id="leaderList">
+            Henüz tamamlanmış okuma yok.
+          </div>
+        </div>
+
+        <div class="box">
+          <h2>📖 En Çok Okunan Kitaplar</h2>
+          <div id="popularBooks">
+            Henüz tamamlanmış okuma yok.
+          </div>
+        </div>
+
+      </div>
+
 
       <div class="box">
         <h2>Son Ödünç İşlemleri</h2>
@@ -82,11 +107,25 @@
         </button>
       </div>
 
-      <input
-        id="bookSearch"
-        type="search"
-        placeholder="Kitap adı, yazar veya QR no ara..."
-      >
+
+      <div class="filters">
+
+        <input
+          id="bookSearch"
+          type="search"
+          placeholder="Kitap adı, yazar veya QR kodu ara..."
+        >
+
+        <select id="bookTypeFilter">
+          <option value="">Tüm Türler</option>
+        </select>
+
+        <select id="bookSubTypeFilter">
+          <option value="">Tüm Alt Türler</option>
+        </select>
+
+      </div>
+
 
       <div id="bookList" class="list"></div>
 
@@ -145,7 +184,17 @@
 
       </div>
 
-      <div id="loanList" class="list"></div>
+
+      <div class="box">
+        <h2>Aktif Ödünçler</h2>
+        <div id="loanList" class="list"></div>
+      </div>
+
+
+      <div class="box">
+        <h2>Ödünç Geçmişi</h2>
+        <div id="loanHistory" class="list"></div>
+      </div>
 
     </section>
 
@@ -183,10 +232,177 @@
         placeholder="Yazar"
       >
 
-      <input
-        id="bType"
-        placeholder="Tür"
-      >
+
+      <label>
+        Ana Tür
+
+        <select
+          id="bType"
+          required
+          onchange="typeChanged()"
+        >
+
+          <option value="">
+            Tür seçin
+          </option>
+
+          <option value="Roman">
+            Roman
+          </option>
+
+          <option value="Hikaye">
+            Hikâye
+          </option>
+
+          <option value="Şiir">
+            Şiir
+          </option>
+
+          <option value="Matematik">
+            Matematik
+          </option>
+
+          <option value="Psikoloji">
+            Psikoloji
+          </option>
+
+          <option value="Felsefe">
+            Felsefe
+          </option>
+
+          <option value="Tarih">
+            Tarih
+          </option>
+
+          <option value="Coğrafya">
+            Coğrafya
+          </option>
+
+          <option value="Bilim">
+            Bilim
+          </option>
+
+          <option value="Biyografi">
+            Biyografi
+          </option>
+
+          <option value="Diğer">
+            + Yeni / Diğer Tür
+          </option>
+
+        </select>
+      </label>
+
+
+      <div id="customTypeArea" hidden>
+
+        <input
+          id="bCustomType"
+          placeholder="Yeni tür adı"
+        >
+
+        <input
+          id="bCustomCode"
+          maxlength="3"
+          placeholder="Tür kodu (örn. Mİ)"
+        >
+
+      </div>
+
+
+      <label id="subTypeArea" hidden>
+        Roman Alt Türü
+
+        <select
+          id="bSubType"
+          onchange="subTypeChanged()"
+        >
+
+          <option value="">
+            Alt tür seçin
+          </option>
+
+          <option value="Psikolojik Roman" data-code="PR">
+            Psikolojik Roman [PR]
+          </option>
+
+          <option value="Polisiye Roman" data-code="PO">
+            Polisiye Roman [PO]
+          </option>
+
+          <option value="Çocuk Romanı" data-code="ÇR">
+            Çocuk Romanı [ÇR]
+          </option>
+
+          <option value="Tarihî Roman" data-code="TR">
+            Tarihî Roman [TR]
+          </option>
+
+          <option value="Bilim Kurgu Romanı" data-code="BK">
+            Bilim Kurgu Romanı [BK]
+          </option>
+
+          <option value="Fantastik Roman" data-code="FR">
+            Fantastik Roman [FR]
+          </option>
+
+          <option value="Macera Romanı" data-code="MR">
+            Macera Romanı [MR]
+          </option>
+
+          <option value="Romantik Roman" data-code="AR">
+            Romantik Roman [AR]
+          </option>
+
+          <option value="Korku / Gerilim Romanı" data-code="KG">
+            Korku / Gerilim Romanı [KG]
+          </option>
+
+          <option value="Toplumsal Roman" data-code="TO">
+            Toplumsal Roman [TO]
+          </option>
+
+          <option value="Biyografik Roman" data-code="BR">
+            Biyografik Roman [BR]
+          </option>
+
+          <option value="Distopik Roman" data-code="DR">
+            Distopik Roman [DR]
+          </option>
+
+          <option value="Gençlik Romanı" data-code="GR">
+            Gençlik Romanı [GR]
+          </option>
+
+          <option value="Diğer Roman" data-code="R">
+            Diğer Roman [R]
+          </option>
+
+        </select>
+
+      </label>
+
+
+      <label>
+        Dewey Sınıflandırma No
+
+        <input
+          id="bDewey"
+          placeholder="Tür seçildiğinde otomatik gelir"
+        >
+      </label>
+
+
+      <label>
+        QR / Kitap Kodu
+
+        <input
+          id="bQrPreview"
+          readonly
+          placeholder="Kaydedildiğinde otomatik oluşturulur"
+        >
+      </label>
+
 
       <div class="row">
 
@@ -206,6 +422,7 @@
         >
 
       </div>
+
 
       <div class="actions">
 
@@ -279,6 +496,34 @@
       </div>
 
     </form>
+
+  </dialog>
+
+
+  <!-- ÖĞRENCİ OKUMA GEÇMİŞİ -->
+
+  <dialog id="studentHistory">
+
+    <div>
+
+      <h2 id="historyTitle">
+        Öğrenci Kitap Bilgisi
+      </h2>
+
+      <div id="historyContent"></div>
+
+      <div class="actions">
+
+        <button
+          type="button"
+          onclick="closeForm('studentHistory')"
+        >
+          Kapat
+        </button>
+
+      </div>
+
+    </div>
 
   </dialog>
 
