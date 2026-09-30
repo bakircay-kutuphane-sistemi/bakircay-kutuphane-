@@ -483,7 +483,7 @@ function updateCodePreview() {
   if (!preview) return;
 
   const type = $("bType")?.value || "";
-  const subtype = $("bSubtype")?.value || "";
+  const subtype = $("bSubType")?.value || "";
   const manualType = $("bManualType")?.value || "";
 
   if (!type) {
@@ -538,7 +538,7 @@ function saveBook(event) {
   event.preventDefault();
 
   let type = $("bType")?.value || "";
-  let subtype = $("bSubtype")?.value || "";
+  let subtype = $("bSubType")?.value || "";
   let manualType = $("bManualType")?.value.trim() || "";
   let dewey = $("bDewey")?.value.trim() || "";
 
@@ -566,12 +566,7 @@ function saveBook(event) {
   }
 
 
-  if (type === "Roman" && !subtype) {
-
-    alert("Lütfen romanın alt türünü seçin.");
-    return;
-  }
-
+  
 
   const finalType =
     type === "__manual__"
