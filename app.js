@@ -733,6 +733,39 @@ function delStudent(id) {
   }
 }
 
+async function editBook(id) {
+
+  const book = books.find(book => book.id === id);
+
+  if (!book) {
+    alert("Kitap bulunamadı.");
+    return;
+  }
+
+  const newName = prompt("Kitap adı:", book.name);
+  if (newName === null) return;
+
+  const newAuthor = prompt("Yazar:", book.author);
+  if (newAuthor === null) return;
+
+  const { error } = await db
+    .from("kitaplar")
+    .update({
+      kitap_adi: newName.trim(),
+      yazar: newAuthor.trim()
+    })
+    .eq("id", id);
+
+  if (error) {
+    console.error(error);
+    alert("Kitap güncellenirken bir hata oluştu.");
+    return;
+  }
+
+  await loadBooks();
+
+  alert("Kitap bilgileri güncellendi.");
+}
 
 /* =========================================================
    EKRANI YENİLE
@@ -813,6 +846,12 @@ function render() {
             >
               QR Kod
             </button>
+
+<button
+  onclick="editBook(${book.id})"
+>
+  Düzenle
+</button>
 
             <button
               class="muted"
