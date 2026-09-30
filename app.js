@@ -1092,3 +1092,5 @@ $("studentSearch").oninput = event => {
 
 loadBooks();
 loadStudents();
+
+alert("YENİ SÜRÜM ÇALIŞIYOR");
