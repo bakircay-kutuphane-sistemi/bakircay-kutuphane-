@@ -632,29 +632,28 @@ function saveBook(event) {
    ÖĞRENCİ
    ========================================================= */
 
-function saveStudent(event) {
-
+async function saveStudent(event) {
   event.preventDefault();
 
-  students.push({
+  const { error } = await db
+    .from("ogrenciler")
+    .insert({
+      ad_soyad: $("sName").value.trim(),
+      sinif: $("sClass").value.trim(),
+      sube: $("sBranch").value.trim(),
+      okul_no: $("sNo").value.trim()
+    });
 
-    id: Date.now(),
-
-    name: $("sName").value.trim(),
-
-    cls: $("sClass").value.trim(),
-
-    branch: $("sBranch").value.trim(),
-
-    no: $("sNo").value.trim()
-
-  });
+  if (error) {
+    console.error("Öğrenci kaydedilemedi:", error);
+    alert("Öğrenci kaydedilirken bir hata oluştu.");
+    return;
+  }
 
   event.target.reset();
-
   closeForm("studentForm");
 
-  save();
+  await loadStudents();
 }
 
 
