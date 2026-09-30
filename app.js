@@ -593,7 +593,6 @@ async function saveBook(event) {
  const { error } = await db
   .from("kitaplar")
   .insert({
-    qr_no: qr,
     kitap_adi: $("bName").value.trim(),
     yazar: $("bAuthor").value.trim(),
     tur: finalType,
