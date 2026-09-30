@@ -533,7 +533,7 @@ if ($("bManualType")) {
    KİTAP KAYDET
    ========================================================= */
 
-function saveBook(event) {
+async function saveBook(event) {
 
   event.preventDefault();
 
@@ -590,36 +590,31 @@ function saveBook(event) {
   }
 
 
-  books.push({
-
-    id: Date.now(),
-
-    qr: qr,
-
-    name: $("bName").value.trim(),
-
-    author: $("bAuthor").value.trim(),
-
-    type: finalType,
-
-    subtype: subtype,
-
-    dewey: dewey,
-
-    cab: $("bCab").value.trim(),
-
-    shelf: $("bShelf").value.trim(),
-
-    order: $("bOrder").value.trim()
-
+ const { error } = await db
+  .from("kitaplar")
+  .insert({
+    qr_no: qr,
+    kitap_adi: $("bName").value.trim(),
+    yazar: $("bAuthor").value.trim(),
+    tur: finalType,
+    alt_tur: subtype || null,
+    dewey: dewey || null,
+    dolap: $("bCab").value.trim() || null,
+    raf: $("bShelf").value.trim() || null,
+    sira: $("bOrder").value.trim() || null
   });
 
+if (error) {
+  console.error("Kitap kaydedilemedi:", error);
+  alert("Kitap kaydedilirken bir hata oluştu.");
+  return;
+} 
 
   event.target.reset();
 
   closeForm("bookForm");
 
-  save();
+  await loadBooks();
 }
 
 
