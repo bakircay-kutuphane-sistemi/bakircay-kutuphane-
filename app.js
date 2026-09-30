@@ -1087,5 +1087,31 @@ $("studentSearch").oninput = event => {
    BAŞLAT
    ========================================================= */
 
+async function loadLoans() {
+
+  const { data, error } = await db
+    .from("odunc_islemleri")
+    .select("*")
+    .order("id", { ascending: true });
+
+  if (error) {
+    console.error("Ödünç işlemleri yüklenemedi:", error);
+    alert("Ödünç işlemleri yüklenirken bir hata oluştu.");
+    return;
+  }
+
+  loans = (data || []).map(loan => ({
+    id: loan.id,
+    book: loan.kitap_id,
+    student: loan.ogrenci_id,
+    start: loan.odunc_tarihi,
+    due: loan.son_teslim_tarihi,
+    returned: loan.iade_tarihi
+  }));
+
+  render();
+}
+
 loadBooks();
 loadStudents();
+loadLoans();
