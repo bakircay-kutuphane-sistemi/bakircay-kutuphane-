@@ -650,40 +650,38 @@ async function saveStudent(event) {
    ÖDÜNÇ
    ========================================================= */
 
-function lendBook() {
+async function lendBook() {
 
   const book = +$("loanBook").value;
   const student = +$("loanStudent").value;
   const due = $("dueDate").value;
 
   if (!book || !student || !due) {
-
-    alert(
-      "Kitap, öğrenci ve son teslim tarihini seç."
-    );
-
+    alert("Kitap, öğrenci ve son teslim tarihini seç.");
     return;
   }
 
-  loans.push({
+  const today = new Date()
+    .toISOString()
+    .slice(0, 10);
 
-    id: Date.now(),
+  const { error } = await db
+    .from("odunc_islemleri")
+    .insert({
+      kitap_id: book,
+      ogrenci_id: student,
+      odunc_tarihi: today,
+      son_teslim_tarihi: due,
+      iade_tarihi: null
+    });
 
-    book: book,
+  if (error) {
+    console.error("Ödünç işlemi kaydedilemedi:", error);
+    alert("Supabase hatası: " + error.message);
+    return;
+  }
 
-    student: student,
-
-    start: new Date()
-      .toISOString()
-      .slice(0, 10),
-
-    due: due,
-
-    returned: null
-
-  });
-
-  save();
+  alert("Kitap başarıyla ödünç verildi.");
 }
 
 
