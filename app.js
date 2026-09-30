@@ -606,7 +606,7 @@ async function saveBook(event) {
 
 if (error) {
   console.error("Kitap kaydedilemedi:", error);
-  alert("Kitap kaydedilirken bir hata oluştu.");
+  alert("Supabase hatası: " + error.message);
   return;
 } 
 
