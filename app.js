@@ -58,7 +58,7 @@ checkSession();
 
 let books = [];
 let students = [];
-let loans = JSON.parse(localStorage.getItem("loans") || "[]");
+let loans = [];
 
 const $ = id => document.getElementById(id);
 
