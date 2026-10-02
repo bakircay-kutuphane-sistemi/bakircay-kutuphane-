@@ -494,15 +494,40 @@
       placeholder="Yazar"
     >
 
-    <input
-      id="editBookType"
-      placeholder="Tür"
-    >
+    <select id="editBookType" onchange="toggleEditSubtype()">
+  <option value="">Ana Tür Seç</option>
+  <option value="Roman">Roman</option>
+  <option value="Hikaye">Hikâye</option>
+  <option value="Şiir">Şiir</option>
+  <option value="Matematik">Matematik</option>
+  <option value="Psikoloji">Psikoloji</option>
+  <option value="Felsefe">Felsefe</option>
+  <option value="Tarih">Tarih</option>
+  <option value="Coğrafya">Coğrafya</option>
+  <option value="Bilim">Bilim</option>
+  <option value="Biyografi">Biyografi</option>
+  <option value="Diğer">+ Yeni / Diğer Tür</option>
+</select>
 
-    <input
-      id="editBookDewey"
-      placeholder="Dewey Sınıflandırma No"
-    >
+<select id="editBookSubType" style="display:none;">
+  <option value="">Roman Alt Türü Seç</option>
+  <option value="Psikolojik Roman" data-code="PR">Psikolojik Roman [PR]</option>
+  <option value="Polisiye Roman" data-code="PO">Polisiye Roman [PO]</option>
+  <option value="Çocuk Romanı" data-code="ÇR">Çocuk Romanı [ÇR]</option>
+  <option value="Tarihî Roman" data-code="TR">Tarihî Roman [TR]</option>
+  <option value="Bilim Kurgu Romanı" data-code="BK">Bilim Kurgu Romanı [BK]</option>
+  <option value="Fantastik Roman" data-code="FR">Fantastik Roman [FR]</option>
+  <option value="Macera Romanı" data-code="MR">Macera Romanı [MR]</option>
+  <option value="Romantik Roman" data-code="AR">Romantik Roman [AR]</option>
+  <option value="Korku / Gerilim Romanı" data-code="KG">Korku / Gerilim Romanı [KG]</option>
+  <option value="Toplumsal Roman" data-code="TO">Toplumsal Roman [TO]</option>
+  <option value="Biyografik Roman" data-code="BR">Biyografik Roman [BR]</option>
+  <option value="Distopik Roman" data-code="DR">Distopik Roman [DR]</option>
+  <option value="Gençlik Romanı" data-code="GR">Gençlik Romanı [GR]</option>
+  <option value="Diğer Roman" data-code="R">Diğer Roman [R]</option>
+</select>
+
+    
 
     <input
       id="editBookQr"
