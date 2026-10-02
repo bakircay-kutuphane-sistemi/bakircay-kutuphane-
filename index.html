@@ -469,6 +469,84 @@
 
   </dialog>
 
+           <!-- KİTAP DÜZENLE -->
+
+<dialog id="editBookForm">
+
+  <form method="dialog" onsubmit="saveEditedBook(event)">
+
+    <h2>Kitap Düzenle</h2>
+
+    <input
+      id="editBookId"
+      type="hidden"
+    >
+
+    <input
+      id="editBookName"
+      required
+      placeholder="Kitabın adı"
+    >
+
+    <input
+      id="editBookAuthor"
+      required
+      placeholder="Yazar"
+    >
+
+    <input
+      id="editBookType"
+      placeholder="Tür"
+    >
+
+    <input
+      id="editBookDewey"
+      placeholder="Dewey Sınıflandırma No"
+    >
+
+    <input
+      id="editBookQr"
+      readonly
+      placeholder="QR / Kitap Kodu"
+    >
+
+    <div class="row">
+
+      <input
+        id="editBookCab"
+        placeholder="Dolap"
+      >
+
+      <input
+        id="editBookShelf"
+        placeholder="Raf"
+      >
+
+      <input
+        id="editBookOrder"
+        placeholder="Sıra"
+      >
+
+    </div>
+
+    <div class="actions">
+
+      <button
+        type="button"
+        onclick="closeForm('editBookForm')"
+      >
+        Vazgeç
+      </button>
+
+      <button type="submit">
+        Kaydet
+      </button>
+
+    </div>
+
+  </form>
+
+</dialog> 
 
   <!-- ÖĞRENCİ EKLE -->
 
