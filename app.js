@@ -734,7 +734,6 @@ function delStudent(id) {
 }
 
 async function editBook(id) {
-
   const book = books.find(book => book.id === id);
 
   if (!book) {
@@ -748,11 +747,23 @@ async function editBook(id) {
   const newAuthor = prompt("Yazar:", book.author);
   if (newAuthor === null) return;
 
+  const newCab = prompt("Dolap:", book.cab || "");
+  if (newCab === null) return;
+
+  const newShelf = prompt("Raf:", book.shelf || "");
+  if (newShelf === null) return;
+
+  const newOrder = prompt("Sıra:", book.order || "");
+  if (newOrder === null) return;
+
   const { error } = await db
     .from("kitaplar")
     .update({
       kitap_adi: newName.trim(),
-      yazar: newAuthor.trim()
+      yazar: newAuthor.trim(),
+      dolap: newCab.trim(),
+      raf: newShelf.trim(),
+      sira: newOrder.trim()
     })
     .eq("id", id);
 
