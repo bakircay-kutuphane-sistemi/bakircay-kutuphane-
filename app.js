@@ -741,29 +741,48 @@ async function editBook(id) {
     return;
   }
 
-  const newName = prompt("Kitap adı:", book.name);
-  if (newName === null) return;
+  document.getElementById("editBookId").value = book.id;
+  document.getElementById("editBookName").value = book.name || "";
+  document.getElementById("editBookAuthor").value = book.author || "";
+  document.getElementById("editBookType").value = book.type || "";
+  document.getElementById("editBookSubType").value = book.subtype || "";
+  document.getElementById("editBookDewey").value = book.dewey || "";
+  document.getElementById("editBookQr").value = book.qr || "";
+  document.getElementById("editBookCab").value = book.cab || "";
+  document.getElementById("editBookShelf").value = book.shelf || "";
+  document.getElementById("editBookOrder").value = book.order || "";
 
-  const newAuthor = prompt("Yazar:", book.author);
-  if (newAuthor === null) return;
+  document.getElementById("editBookForm").showModal();
+}
 
-  const newCab = prompt("Dolap:", book.cab || "");
-  if (newCab === null) return;
+async function saveEditedBook(event) {
+  event.preventDefault();
 
-  const newShelf = prompt("Raf:", book.shelf || "");
-  if (newShelf === null) return;
+  const id = document.getElementById("editBookId").value;
 
-  const newOrder = prompt("Sıra:", book.order || "");
-  if (newOrder === null) return;
+  const name = document.getElementById("editBookName").value.trim();
+  const author = document.getElementById("editBookAuthor").value.trim();
+  const type = document.getElementById("editBookType").value.trim();
+  const dewey = document.getElementById("editBookDewey").value.trim();
+  const cab = document.getElementById("editBookCab").value.trim();
+  const shelf = document.getElementById("editBookShelf").value.trim();
+  const order = document.getElementById("editBookOrder").value.trim();
+
+  if (!name || !author) {
+    alert("Kitap adı ve yazar boş bırakılamaz.");
+    return;
+  }
 
   const { error } = await db
     .from("kitaplar")
     .update({
-      kitap_adi: newName.trim(),
-      yazar: newAuthor.trim(),
-      dolap: newCab.trim(),
-      raf: newShelf.trim(),
-      sira: newOrder.trim()
+      kitap_adi: name,
+      yazar: author,
+      tur: type,
+      dewey: dewey,
+      dolap: cab,
+      raf: shelf,
+      sira: order
     })
     .eq("id", id);
 
@@ -772,6 +791,8 @@ async function editBook(id) {
     alert("Kitap güncellenirken bir hata oluştu.");
     return;
   }
+
+  document.getElementById("editBookForm").close();
 
   await loadBooks();
 
