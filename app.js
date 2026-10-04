@@ -763,6 +763,7 @@ async function saveEditedBook(event) {
   const name = document.getElementById("editBookName").value.trim();
   const author = document.getElementById("editBookAuthor").value.trim();
   const type = document.getElementById("editBookType").value.trim();
+  const subtype = document.getElementById("editBookSubType").value.trim();
   const dewey = document.getElementById("editBookDewey").value.trim();
   const cab = document.getElementById("editBookCab").value.trim();
   const shelf = document.getElementById("editBookShelf").value.trim();
@@ -779,6 +780,7 @@ async function saveEditedBook(event) {
       kitap_adi: name,
       yazar: author,
       tur: type,
+      alt_tur: subtype,
       dewey: dewey,
       dolap: cab,
       raf: shelf,
