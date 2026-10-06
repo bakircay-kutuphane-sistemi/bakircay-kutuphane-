@@ -1,4 +1,4 @@
-const SUPABASE_URL = "https://kdeipenudegjcmrmrvcu.supabase.co";
+ol const SUPABASE_URL = "https://kdeipenudegjcmrmrvcu.supabase.co";
 const SUPABASE_KEY = "sb_publishable_5iRCAo4Oxj-e9Ux93sOGpA_-xP91JOF";
 const db = window.supabase.createClient(
   SUPABASE_URL,
@@ -759,6 +759,7 @@ async function editBook(id) {
   setValue("editBookName", book.kitap_adi || book.name);
   setValue("editBookAuthor", book.yazar || book.author);
   setValue("editBookType", book.tur || book.type);
+  toggleEditSubType();
   setValue("editBookSubType", book.alt_tur || book.subtype);
   setValue("editBookDewey", book.dewey);
   setValue("editBookQr", book.qr_no || book.qr);
