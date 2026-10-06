@@ -482,18 +482,21 @@
       type="hidden"
     >
 
+    <label>Kitap Adı</label>
     <input
       id="editBookName"
       required
       placeholder="Kitabın adı"
     >
 
+   <label>Yazar</label> 
     <input
       id="editBookAuthor"
       required
       placeholder="Yazar"
     >
 
+   <label>Ana Tür</label> 
     <select id="editBookType" onchange="toggleEditSubtype()">
   <option value="">Ana Tür Seç</option>
   <option value="Roman">Roman</option>
@@ -509,6 +512,7 @@
   <option value="Diğer">+ Yeni / Diğer Tür</option>
 </select>
 
+    <label id="editBookSubTypeLabel" style="display:none;">Alt Tür</label>
 <select id="editBookSubType" style="display:none;">
   <option value="">Roman Alt Türü Seç</option>
   <option value="Psikolojik Roman" data-code="PR">Psikolojik Roman [PR]</option>
@@ -527,8 +531,14 @@
   <option value="Diğer Roman" data-code="R">Diğer Roman [R]</option>
 </select>
 
-    
 
+    <label>Dewey Sınıflandırma No</label>
+<input
+  id="editBookDewey"
+  placeholder="Dewey Sınıflandırma No"
+>
+    
+<label>QR / Kitap Kodu</label>
     <input
       id="editBookQr"
       readonly
@@ -537,16 +547,19 @@
 
     <div class="row">
 
+      <label>Dolap</label>
       <input
         id="editBookCab"
         placeholder="Dolap"
       >
 
+      <label>Raf</label>
       <input
         id="editBookShelf"
         placeholder="Raf"
       >
 
+      <label>Sıra</label>
       <input
         id="editBookOrder"
         placeholder="Sıra"
