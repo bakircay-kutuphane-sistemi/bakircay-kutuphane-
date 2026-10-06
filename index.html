@@ -265,7 +265,7 @@
         <select
           id="bType"
           required
-          onchange="typeChanged()"
+          onchange="handleTypeChange()"
         >
 
           <option value="">
@@ -320,10 +320,10 @@
       </label>
 
 
-      <div id="customTypeArea" hidden>
+      <div id="customTypeArea">
 
         <input
-          id="bCustomType"
+          id="bManualType"
           placeholder="Yeni tür adı"
         >
 
@@ -336,12 +336,12 @@
       </div>
 
 
-      <label id="subTypeArea" hidden>
+      <label id="subTypeArea">
         Roman Alt Türü
 
         <select
           id="bSubType"
-          onchange="subTypeChanged()"
+       onchange="updateCodePreview()" 
         >
 
           <option value="">
@@ -423,7 +423,7 @@
         QR / Kitap Kodu
 
         <input
-          id="bQrPreview"
+          id="bCodePreview"
           readonly
           placeholder="Kaydedildiğinde otomatik oluşturulur"
         >
@@ -497,7 +497,7 @@
     >
 
    <label>Ana Tür</label> 
-    <select id="editBookType" onchange="toggleEditSubtype()">
+   <select id="editBookType" onchange="toggleEditSubType()"> 
   <option value="">Ana Tür Seç</option>
   <option value="Roman">Roman</option>
   <option value="Hikaye">Hikâye</option>
@@ -513,7 +513,7 @@
 </select>
 
     <label id="editBookSubTypeLabel" style="display:none;">Alt Tür</label>
-<select id="editBookSubType" style="display:none;">
+<select id="editBookSubType" style="display:none;" onchange="updateEditBookCodePreview()">
   <option value="">Roman Alt Türü Seç</option>
   <option value="Psikolojik Roman" data-code="PR">Psikolojik Roman [PR]</option>
   <option value="Polisiye Roman" data-code="PO">Polisiye Roman [PO]</option>
