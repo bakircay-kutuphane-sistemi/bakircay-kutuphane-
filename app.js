@@ -734,25 +734,43 @@ function delStudent(id) {
 }
 
 async function editBook(id) {
-  const book = books.find(book => book.id === id);
+  const book = books.find(book => String(book.id) === String(id));
 
   if (!book) {
     alert("Kitap bulunamadı.");
     return;
   }
 
-  document.getElementById("editBookId").value = book.id;
-  document.getElementById("editBookName").value = book.name || "";
-  document.getElementById("editBookAuthor").value = book.author || "";
-  document.getElementById("editBookType").value = book.type || "";
-  document.getElementById("editBookSubType").value = book.subtype || "";
-  document.getElementById("editBookDewey").value = book.dewey || "";
-  document.getElementById("editBookQr").value = book.qr || "";
-  document.getElementById("editBookCab").value = book.cab || "";
-  document.getElementById("editBookShelf").value = book.shelf || "";
-  document.getElementById("editBookOrder").value = book.order || "";
+  const form = document.getElementById("editBookForm");
 
-  document.getElementById("editBookForm").showModal();
+  if (!form) {
+    alert("Kitap düzenleme penceresi bulunamadı.");
+    return;
+  }
+
+  const setValue = (elementId, value = "") => {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.value = value ?? "";
+    }
+  };
+
+  setValue("editBookId", book.id);
+  setValue("editBookName", book.kitap_adi || book.name);
+  setValue("editBookAuthor", book.yazar || book.author);
+  setValue("editBookType", book.tur || book.type);
+  setValue("editBookSubType", book.alt_tur || book.subtype);
+  setValue("editBookDewey", book.dewey);
+  setValue("editBookQr", book.qr_no || book.qr);
+  setValue("editBookCab", book.dolap || book.cab);
+  setValue("editBookShelf", book.raf || book.shelf);
+  setValue("editBookOrder", book.sira || book.order);
+
+  if (typeof form.showModal === "function") {
+    form.showModal();
+  } else {
+    form.setAttribute("open", "");
+  }
 }
 
 async function saveEditedBook(event) {
