@@ -900,7 +900,7 @@ function render() {
             </button>
 
 <button
-  onclick="editBook(${book.id})"
+  onclick="editBook('${book.id}')"
 >
   Düzenle
 </button>
