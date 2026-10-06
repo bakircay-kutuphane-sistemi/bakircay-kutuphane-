@@ -774,6 +774,23 @@ async function editBook(id) {
   }
 }
 
+function toggleEditSubType() {
+  const type = document.getElementById("editBookType");
+  const subtype = document.getElementById("editBookSubType");
+  const label = document.getElementById("editBookSubTypeLabel");
+
+  if (!type || !subtype) return;
+
+  if (type.value === "Roman") {
+    subtype.style.display = "block";
+    if (label) label.style.display = "block";
+  } else {
+    subtype.style.display = "none";
+    if (label) label.style.display = "none";
+    subtype.value = "";
+  }
+}
+
 async function saveEditedBook(event) {
   event.preventDefault();
 
