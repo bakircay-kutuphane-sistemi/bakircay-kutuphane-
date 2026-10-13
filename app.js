@@ -304,7 +304,7 @@ function handleTypeChange() {
 
   const type = $("bType")?.value;
 
-  const subtype = $("bSubtype");
+  const subtype = $("bSubType");
   const manualType = $("bManualType");
   const dewey = $("bDewey");
   const codePreview = $("bCodePreview");
@@ -596,6 +596,7 @@ async function saveBook(event) {
     kitap_adi: $("bName").value.trim(),
     yazar: $("bAuthor").value.trim(),
     tur: finalType,
+    qr_no: qr,
     alt_tur: subtype || null,
     dewey: dewey || null,
     dolap: $("bCab").value.trim() || null,
@@ -681,6 +682,7 @@ async function lendBook() {
     return;
   }
 
+  await loadLoans();
   alert("Kitap başarıyla ödünç verildi.");
 }
 
@@ -689,48 +691,93 @@ async function lendBook() {
    İADE
    ========================================================= */
 
-function returnBook(id) {
 
-  const loan =
-    loans.find(item => item.id === id);
+async function returnBook(id) {
+  const loan = loans.find(item => String(item.id) === String(id));
 
-  if (loan) {
-
-    loan.returned =
-      new Date()
-        .toISOString()
-        .slice(0, 10);
-
-    save();
+  if (!loan) {
+    alert("Ödünç kaydı bulunamadı.");
+    return;
   }
+
+  const today = new Date().toISOString().slice(0, 10);
+
+  const { error } = await db
+    .from("odunc_islemleri")
+    .update({ iade_tarihi: today })
+    .eq("id", id);
+
+  if (error) {
+    console.error("İade hatası:", error);
+    alert("Kitap iade edilirken bir hata oluştu: " + error.message);
+    return;
+  }
+
+  await loadLoans();
+  alert("Kitap başarıyla iade alındı.");
 }
+
 
 
 /* =========================================================
    SİLME
    ========================================================= */
 
-function delBook(id) {
 
-  if (confirm("Bu kitap silinsin mi?")) {
+async function delBook(id) {
+  if (!confirm("Bu kitap silinsin mi?")) return;
 
-    books =
-      books.filter(book => book.id !== id);
+  const hasLoans = loans.some(
+    loan => String(loan.book) === String(id)
+  );
 
-    save();
+  if (hasLoans) {
+    alert("Bu kitabın ödünç geçmişi var. Kayıtların korunması için kitap silinemiyor.");
+    return;
   }
+
+  const { error } = await db
+    .from("kitaplar")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    console.error("Kitap silme hatası:", error);
+    alert("Kitap silinemedi: " + error.message);
+    return;
+  }
+
+  await loadBooks();
+  alert("Kitap başarıyla silindi.");
 }
 
 
-function delStudent(id) {
 
-  if (confirm("Bu öğrenci silinsin mi?")) {
+async function delStudent(id) {
+  if (!confirm("Bu öğrenci silinsin mi?")) return;
 
-    students =
-      students.filter(student => student.id !== id);
+  const hasLoans = loans.some(
+    loan => String(loan.student) === String(id)
+  );
 
-    save();
+  if (hasLoans) {
+    alert("Bu öğrencinin ödünç geçmişi var. Kayıtların korunması için öğrenci silinemiyor.");
+    return;
   }
+
+  const { error } = await db
+    .from("ogrenciler")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    console.error("Öğrenci silme hatası:", error);
+    alert("Öğrenci silinemedi: " + error.message);
+    return;
+  }
+
+  await loadStudents();
+  alert("Öğrenci başarıyla silindi.");
 }
 
 async function editBook(id) {
@@ -830,7 +877,12 @@ async function saveEditedBook(event) {
     return;
   }
 
-  document.getElementById("editBookForm").close();
+  const editForm = document.getElementById("editBookForm");
+if (editForm?.close) {
+  editForm.close();
+} else {
+  editForm?.removeAttribute("open");
+}
 
   await loadBooks();
 
@@ -1045,12 +1097,12 @@ function render() {
 
       const book =
         books.find(
-          item => item.id === loan.book
+         item => String(item.id) === String(loan.book) 
         );
 
       const student =
         students.find(
-          item => item.id === loan.student
+          item => String(item.id) === String(loan.student)
         );
 
       return `
@@ -1099,12 +1151,12 @@ function render() {
 
       const book =
         books.find(
-          item => item.id === loan.book
+          item => String(item.id) === String(loan.book)
         );
 
       const student =
         students.find(
-          item => item.id === loan.student
+          item => String(item.id) === String(loan.student)
         );
 
       const days =
