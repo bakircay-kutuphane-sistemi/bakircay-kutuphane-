@@ -958,6 +958,7 @@ function render() {
               / Raf ${book.shelf || "-"}
 
               / Sıra ${book.order || "-"}
+              <br>
             </small>
             
 <span style="display:inline-block;padding:8px 12px;border-radius:8px;color:white;font-weight:bold;background:${loans.some(loan => String(loan.book) === String(book.id) && !loan.returned) ? '#dc3545' : '#198754'}">${loans.some(loan => String(loan.book) === String(book.id) && !loan.returned) ? 'Müsait değil' : 'Müsait'}</span>
