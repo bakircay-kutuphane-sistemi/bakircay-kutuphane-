@@ -78,7 +78,9 @@ async function loadBooks() {
     return;
   }
 
-  books = (data || []).map(book => ({
+books = (data || [])
+  .filter(book => book.arsivlendi !== true)
+  .map(book => ({
     id: book.id,
     qr: book.qr_no,
     name: book.kitap_adi,
@@ -724,32 +726,34 @@ async function returnBook(id) {
    ========================================================= */
 
 
-async function delBook(id) {
-  if (!confirm("Bu kitap silinsin mi?")) return;
 
-  const hasLoans = loans.some(
-    loan => String(loan.book) === String(id)
+async function delBook(id) {
+  const activeLoan = loans.some(
+    loan => String(loan.book) === String(id) && !loan.returned
   );
 
-  if (hasLoans) {
-    alert("Bu kitap ödünçte veya daha önce ödünç verilmiş. Ödünç geçmişini korumak için silinemez.");
+  if (activeLoan) {
+    alert("Bu kitap şu anda ödünçte. İade alınmadan arşivlenemez.");
     return;
   }
 
+  if (!confirm("Bu kitap arşivlensin mi?")) return;
+
   const { error } = await db
     .from("kitaplar")
-    .delete()
+    .update({ arsivlendi: true })
     .eq("id", id);
 
   if (error) {
-    console.error("Kitap silme hatası:", error);
-    alert("Kitap silinemedi: " + error.message);
+    console.error("Kitap arşivleme hatası:", error);
+    alert("Kitap arşivlenemedi: " + error.message);
     return;
   }
 
   await loadBooks();
-  alert("Kitap başarıyla silindi.");
+  alert("Kitap başarıyla arşivlendi.");
 }
+
 
 
 
