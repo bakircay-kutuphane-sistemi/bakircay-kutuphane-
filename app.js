@@ -970,11 +970,13 @@ function render() {
 
           <div class="buttons">
 
-            <button
-              onclick="alert('Kitap Kodu: ${book.qr}')"
-            >
-              QR Kod
-            </button>
+<button
+  onclick="showBookQR('${book.qr}')"
+>
+  QR Kod
+</button>
+
+          
 
 <button
   onclick="editBook('${book.id}')"
@@ -1283,3 +1285,39 @@ async function loadLoans() {
 loadBooks();
 loadStudents();
 loadLoans();
+
+
+
+function showBookQR(code) {
+  if (!code) {
+    alert("Bu kitabın kodu bulunamadı.");
+    return;
+  }
+
+  const qrUrl =
+    "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" +
+    encodeURIComponent(code);
+
+  const popup = window.open("", "_blank");
+
+  if (!popup) {
+    alert("QR kod penceresi açılamadı.");
+    return;
+  }
+
+  popup.document.write(`
+    <html>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Kitap QR Kodu</title>
+      </head>
+      <body style="text-align:center;font-family:Arial;padding:25px;">
+        <h2>Kitap QR Kodu</h2>
+        <img src="${qrUrl}" alt="QR Kod" width="250" height="250">
+        <p>${code}</p>
+        <button onclick="window.print()">Yazdır</button>
+      </body>
+    </html>
+  `);
+  popup.document.close();
+}
