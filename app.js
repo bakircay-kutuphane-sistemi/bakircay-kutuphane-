@@ -598,7 +598,7 @@ async function saveBook(event) {
     kitap_adi: $("bName").value.trim(),
     yazar: $("bAuthor").value.trim(),
     tur: finalType,
-    
+    qr_no: qr,
     alt_tur: subtype || null,
     dewey: dewey || null,
     dolap: $("bCab").value.trim() || null,
