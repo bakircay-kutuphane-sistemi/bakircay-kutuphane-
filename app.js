@@ -1315,8 +1315,8 @@ function showBookQR(code) {
     return;
   }
   const bookLink =
-  "https://bakircay-kutuphane-sistemi.github.io/bakircay-kutuphane/?kitap=" +
-  encodeURIComponent(code);
+ "https://bakircay-kutuphane-sistemi.github.io/bakircay-kutuphane-/?kitap=" +
+  encodeURIComponent(code.trim());
 
   const qrUrl =
     "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" +
