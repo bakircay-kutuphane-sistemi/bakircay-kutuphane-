@@ -732,7 +732,7 @@ async function delBook(id) {
   );
 
   if (hasLoans) {
-    alert("Bu kitabın ödünç geçmişi var. Kayıtların korunması için kitap silinemiyor.");
+    alert("Bu kitap ödünçte veya daha önce ödünç verilmiş. Ödünç geçmişini korumak için silinemez.");
     return;
   }
 
