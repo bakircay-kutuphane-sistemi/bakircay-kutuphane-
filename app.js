@@ -956,6 +956,7 @@ function render() {
               · ${book.qr}
               · Dolap ${book.cab || "-"}
               / Raf ${book.shelf || "-"}
+              · ${loans.some(loan => String(loan.book) === String(book.id) && !loan.returned) ? "Müsait değil" : "Müsait"}
               / Sıra ${book.order || "-"}
             </small>
 
