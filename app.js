@@ -1286,17 +1286,41 @@ loadBooks();
 loadStudents();
 loadLoans();
 
+window.addEventListener("load", () => {
+  setTimeout(openBookFromQR, 1000);
+});
+function openBookFromQR() {
+  const code = new URLSearchParams(window.location.search).get("kitap");
 
+  if (!code) return;
+
+  const search = document.getElementById("bookSearch");
+  if (!search) return;
+
+  const bookPage = document.getElementById("kitaplar");
+  if (bookPage) {
+    document.querySelectorAll(".page").forEach(page => {
+      page.classList.remove("active");
+    });
+    bookPage.classList.add("active");
+  }
+
+  search.value = code;
+  search.dispatchEvent(new Event("input"));
+}
 
 function showBookQR(code) {
   if (!code) {
     alert("Bu kitabın kodu bulunamadı.");
     return;
   }
+  const bookLink =
+  "https://bakircay-kutuphane-sistemi.github.io/bakircay-kutuphane/?qr=" +
+  encodeURIComponent(code);
 
   const qrUrl =
     "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" +
-    encodeURIComponent(code);
+    encodeURIComponent(bookLink);
 
   const popup = window.open("", "_blank");
 
