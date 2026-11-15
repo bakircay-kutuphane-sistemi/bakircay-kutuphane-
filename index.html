@@ -53,6 +53,9 @@
     <button type="button" data-page="ogrenciler">👥 Öğrenciler</button>
     <button type="button" data-page="odunc">↔ Ödünç / İade</button>
     <button type="button" data-page="geciken">⚠ Gecikenler</button>
+    
+<button type="button" data-page="hareketler">📋 Kitap Hareketleri</button>
+  
   </aside>
 
 
@@ -245,6 +248,22 @@
       <div id="lateList" class="list"></div>
 
     </section>
+    
+<!-- KİTAP HAREKETLERİ -->
+<section id="hareketler" class="page">
+  <h1>Kitap Hareketleri</h1>
+
+  <input
+    type="search"
+    id="hareketSearch"
+    placeholder="Kitap adı, yazar veya QR kod ile ara..."
+    oninput="renderBookMovements()"
+  >
+
+  <div id="hareketList" class="list">
+    Kitap hareketleri yükleniyor...
+  </div>
+</section>
 
   </main>
 
