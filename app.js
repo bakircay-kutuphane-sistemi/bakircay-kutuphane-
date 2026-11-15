@@ -1186,7 +1186,7 @@ function render() {
     const student = students.find(s => String(s.id) === String(loan.student));
 
     return `
-      <div class="item">
+      <div class="item" style="border-left:6px solid ${loan.returned ? '#65A87C' : (loan.due && new Date(loan.due) < new Date() ? '#D96B6B' : '#E5A84B')};padding-left:16px;">
         <b>${book?.name || "Kitap"}</b>
         <div>${student?.name || "Öğrenci"}</div>
         <small>
