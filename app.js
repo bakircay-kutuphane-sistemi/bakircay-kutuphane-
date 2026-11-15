@@ -926,6 +926,40 @@ function render() {
     late.length;
 
 
+  const completed = loans.filter(loan => loan.returned);
+
+  $("sOkuma").textContent = completed.length;
+
+  const studentCounts = {};
+  const bookCounts = {};
+
+  completed.forEach(loan => {
+    const studentId = String(loan.student);
+    const bookId = String(loan.book);
+
+    studentCounts[studentId] = (studentCounts[studentId] || 0) + 1;
+    bookCounts[bookId] = (bookCounts[bookId] || 0) + 1;
+  });
+
+  const leaders = Object.entries(studentCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10);
+
+  $("leaderList").innerHTML = leaders.map(([id, count], index) => {
+    const student = students.find(s => String(s.id) === id);
+    return `<div class="item">${index + 1}. ${student?.name || "Öğrenci"} — ${count} kitap</div>`;
+  }).join("") || "Henüz tamamlanmış okuma yok.";
+
+  const popular = Object.entries(bookCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10);
+
+  $("popularBooks").innerHTML = popular.map(([id, count], index) => {
+    const book = books.find(b => String(b.id) === id);
+    return `<div class="item">${index + 1}. ${book?.name || "Kitap"} — ${count} kez</div>`;
+  }).join("") || "Henüz tamamlanmış okuma yok.";
+
+  
   /* =====================================================
      KİTAP LİSTESİ
      ===================================================== */
