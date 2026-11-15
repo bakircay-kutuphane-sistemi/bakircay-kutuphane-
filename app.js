@@ -1180,8 +1180,21 @@ function render() {
   $("loanList").innerHTML =
     loanHTML;
 
-  $("sonIslem").innerHTML =
-    loanHTML || "Henüz işlem yok.";
+ $("sonIslem").innerHTML =
+  loans.slice().reverse().slice(0, 10).map(loan => {
+    const book = books.find(b => String(b.id) === String(loan.book));
+    const student = students.find(s => String(s.id) === String(loan.student));
+
+    return `
+      <div class="item">
+        <b>${book?.name || "Kitap"}</b>
+        <div>${student?.name || "Öğrenci"}</div>
+        <small>
+          ${loan.returned ? "İade edildi: " + loan.returned : "Ödünçte"}
+        </small>
+      </div>
+    `;
+  }).join("") || "Henüz işlem yok.";
 
 
   /* =====================================================
