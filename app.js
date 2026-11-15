@@ -741,7 +741,10 @@ async function delBook(id) {
 
   const { error } = await db
     .from("kitaplar")
-    .update({ arsivlendi: true })
+    .update({
+  arsivlendi: true,
+  arsivlenme_tarihi: new Date().toISOString()
+})
     .eq("id", id);
 
   if (error) {
