@@ -612,7 +612,10 @@ if (error) {
   alert("Supabase hatası: " + error.message);
   return;
 } 
-
+  await db.from("kitap_hareketleri").insert({
+    kitap_adi: $("bName").value.trim(),
+    islem_turu: "Eklendi"
+  });
   event.target.reset();
 
   closeForm("bookForm");
