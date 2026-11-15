@@ -1354,7 +1354,7 @@ function renderBookMovements() {
     [book.name, book.author, book.qr].some(value =>
       String(value || "").toLocaleLowerCase("tr").includes(search)
     )
-  );
+).sort((a, b) => Number(b.id) - Number(a.id));
 
   list.innerHTML = filtered.length
     ? filtered.map(book => `
