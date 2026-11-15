@@ -94,6 +94,7 @@ books = (data || [])
   }));
 
   render();
+renderBookMovements();
 }
 
 /* =========================
@@ -1336,6 +1337,31 @@ async function loadLoans() {
   }));
   
   render();
+  renderBookMovements();
+}
+function renderBookMovements() {
+  const list = document.getElementById("hareketList");
+  if (!list) return;
+
+  const search = (
+    document.getElementById("hareketSearch")?.value || ""
+  ).toLocaleLowerCase("tr");
+
+  const filtered = books.filter(book =>
+    [book.name, book.author, book.qr].some(value =>
+      String(value || "").toLocaleLowerCase("tr").includes(search)
+    )
+  );
+
+  list.innerHTML = filtered.length
+    ? filtered.map(book => `
+        <div class="item">
+          <strong>📗 Kitap Kaydı</strong>
+          <div>${book.name}</div>
+          <small>${book.author} · ${book.qr}</small>
+        </div>
+      `).join("")
+    : "<p>Gösterilecek kitap kaydı bulunamadı.</p>";
 }
 
 loadBooks();
