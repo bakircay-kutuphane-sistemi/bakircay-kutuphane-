@@ -947,7 +947,7 @@ function render() {
 
   $("leaderList").innerHTML = leaders.map(([id, count], index) => {
     const student = students.find(s => String(s.id) === id);
-    return `<div class="item">${index + 1}. ${student?.name || "Öğrenci"} — ${count} kitap</div>`;
+    return `<div class="item"><span style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:#DCEFE2;color:#286846;font-weight:bold;margin-right:12px;">${index + 1}</span> ${student?.name || "Öğrenci"} — ${count} kitap</div>`;
   }).join("") || "Henüz tamamlanmış okuma yok.";
 
   const popular = Object.entries(bookCounts)
@@ -956,7 +956,7 @@ function render() {
 
   $("popularBooks").innerHTML = popular.map(([id, count], index) => {
     const book = books.find(b => String(b.id) === id);
-    return `<div class="item">${index + 1}. ${book?.name || "Kitap"} — ${count} kez</div>`;
+    return `<div class="item"><span style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:${index === 0 ? '#DDEBFA' : '#FBE8D6'};color:${index === 0 ? '#285B80' : '#9A5726'};font-weight:bold;margin-right:12px;">${index + 1}</span> ${book?.name || "Kitap"} — ${count} kez</div>`;
   }).join("") || "Henüz tamamlanmış okuma yok.";
 
   
