@@ -1253,6 +1253,12 @@ function render() {
 
     '<div class="box">Geciken kitap yok. 🎉</div>';
 
+const dashboardLate = document.getElementById("dashboardLateList");
+if (dashboardLate) {
+  dashboardLate.innerHTML =
+    document.getElementById("lateList").innerHTML;
+}
+
 }
 
 
