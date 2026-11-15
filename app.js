@@ -1312,7 +1312,8 @@ async function loadLoans() {
     due: loan.son_teslim_tarihi,
     returned: loan.iade_tarihi
   }));
-
+alert("Yüklenen ödünç kaydı: " + loans.length);
+  
   render();
 }
 
