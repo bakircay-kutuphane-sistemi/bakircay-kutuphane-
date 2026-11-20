@@ -593,7 +593,7 @@ async function saveBook(event) {
   }
 
 
- const { error } = await db
+ const { data: yeniKitap, error } = await db
   .from("kitaplar")
   .insert({
     kitap_adi: $("bName").value.trim(),
@@ -605,18 +605,18 @@ async function saveBook(event) {
     dolap: $("bCab").value.trim() || null,
     raf: $("bShelf").value.trim() || null,
     sira: $("bOrder").value.trim() || null
-  });
-
+}).select().single();
 if (error) {
   console.error("Kitap kaydedilemedi:", error);
   alert("Supabase hatası: " + error.message);
   return;
 } 
   const { error: hareketHatasi } = await db.from("kitap_hareketleri").insert({
-    kitap_adi: $("bName").value.trim(),
+    kitap_id: yeniKitap.id,
+    kitap_adi: yeniKitap.kitap_adi,
     islem_turu: "Eklendi",
-yazar: $("bAuthor").value.trim(),
-qr_kod: qr
+yazar: yeniKitap.yazar,
+qr_kod: yeniKitap.qr_no
   });
   
 if (hareketHatasi) {
