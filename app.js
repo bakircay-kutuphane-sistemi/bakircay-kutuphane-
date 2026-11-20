@@ -737,6 +737,7 @@ async function returnBook(id) {
 
 
 async function delBook(id) {
+  const silinenKitap = books.find(book => String(book.id) === String(id));
   const activeLoan = loans.some(
     loan => String(loan.book) === String(id) && !loan.returned
   );
@@ -761,7 +762,21 @@ async function delBook(id) {
     alert("Kitap arşivlenemedi: " + error.message);
     return;
   }
+if (silinenKitap) {
+  const { error: hareketHatasi } = await db
+    .from("kitap_hareketleri")
+    .insert({
+      kitap_id: silinenKitap.id,
+      kitap_adi: silinenKitap.kitap_adi || silinenKitap.name,
+      islem_turu: "Silindi",
+      yazar: silinenKitap.yazar || silinenKitap.author,
+      qr_kod: silinenKitap.qr_no || silinenKitap.qr
+    });
 
+  if (hareketHatasi) {
+    alert("Silme hareketi kaydedilemedi: " + hareketHatasi.message);
+  }
+}
   await loadBooks();
   alert("Kitap başarıyla arşivlendi.");
 }
