@@ -1347,16 +1347,25 @@ async function loadLoans() {
   render();
   renderBookMovements();
 }
-function renderBookMovements() {
+async function renderBookMovements() {
   const list = document.getElementById("hareketList");
   if (!list) return;
+  const { data: hareketler, error } = await db
+  .from("kitap_hareketleri")
+  .select("*")
+  .order("created_at", { ascending: false });
+
+if (error) {
+  console.error("Kitap hareketleri yüklenemedi:", error);
+  return;
+}
 
   const search = (
     document.getElementById("hareketSearch")?.value || ""
   ).toLocaleLowerCase("tr");
 
-  const filtered = books.filter(book =>
-    [book.name, book.author, book.qr].some(value =>
+  const filtered = (hareketler || []).filter(book =>
+    [book.kitap_adi, book.yazar, book.qr_kod].some(value =>
       String(value || "").toLocaleLowerCase("tr").includes(search)
     )
 ).sort((a, b) => Number(b.id) - Number(a.id));
@@ -1364,9 +1373,10 @@ function renderBookMovements() {
   list.innerHTML = filtered.length
     ? filtered.map(book => `
         <div class="item">
-          <strong>📗 Kitap Kaydı</strong>
-          <div>${book.name}</div>
-          <small>${book.author} · ${book.qr}</small>
+          <strong>${book.islem_turu === "Eklendi" ? "📗" : "📋"} ${book.islem_turu || "Kitap Hareketi"}</strong>
+          <div>${book.kitap_adi}</div>
+       <small>${book.yazar || "Yazar belirtilmemiş"} · ${book.qr_kod || "QR kodu yok"}</small>
+       <small>📅 ${new Date(book.created_at).toLocaleString("tr-TR")}</small>
         </div>
       `).join("")
     : "<p>Gösterilecek kitap kaydı bulunamadı.</p>";
