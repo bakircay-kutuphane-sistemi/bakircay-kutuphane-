@@ -614,7 +614,9 @@ if (error) {
 } 
   await db.from("kitap_hareketleri").insert({
     kitap_adi: $("bName").value.trim(),
-    islem_turu: "Eklendi"
+    islem_turu: "Eklendi",
+yazar: $("bAuthor").value.trim(),
+qr_kod: qr
   });
   event.target.reset();
 
