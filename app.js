@@ -618,10 +618,11 @@ if (error) {
 yazar: $("bAuthor").value.trim(),
 qr_kod: qr
   });
-  event.target.reset();
+  
 if (hareketHatasi) {
   alert("Kitap hareketi hatası: " + hareketHatasi.message);
 }
+  event.target.reset();
   closeForm("bookForm");
 
   await loadBooks();
