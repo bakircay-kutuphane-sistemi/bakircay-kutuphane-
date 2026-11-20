@@ -612,14 +612,16 @@ if (error) {
   alert("Supabase hatası: " + error.message);
   return;
 } 
-  await db.from("kitap_hareketleri").insert({
+  const { error: hareketHatasi } = await db.from("kitap_hareketleri").insert({
     kitap_adi: $("bName").value.trim(),
     islem_turu: "Eklendi",
 yazar: $("bAuthor").value.trim(),
 qr_kod: qr
   });
   event.target.reset();
-
+if (hareketHatasi) {
+  alert("Kitap hareketi hatası: " + hareketHatasi.message);
+}
   closeForm("bookForm");
 
   await loadBooks();
